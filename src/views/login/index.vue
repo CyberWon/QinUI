@@ -12,7 +12,7 @@
         <h5 f-c-c text-24 font-normal color="#6a6a6a"><icon-custom-logo mr-10 text-50 color-primary />{{ title }}</h5>
         <div mt-30>
           <n-input
-            v-model:value="loginInfo.name"
+            v-model:value="loginInfo.username"
             autofocus
             class="text-16 items-center h-50 pl-10"
             placeholder="admin"
@@ -67,7 +67,7 @@ initLoginInfo()
 function initLoginInfo() {
   const localLoginInfo = lStorage.get('loginInfo')
   if (localLoginInfo) {
-    loginInfo.value.name = localLoginInfo.name || ''
+    loginInfo.value.username = localLoginInfo.username || ''
     loginInfo.value.password = localLoginInfo.password || ''
   }
 }
@@ -75,19 +75,20 @@ function initLoginInfo() {
 const isRemember = useStorage('isRemember', false)
 const loading = ref(false)
 async function handleLogin() {
-  const { name, password } = loginInfo.value
-  if (!name || !password) {
+  const { username, password } = loginInfo.value
+  if (!username || !password) {
     $message.warning('请输入用户名和密码')
     return
   }
   try {
     loading.value = true
     $message.loading('正在验证...')
-    const res = await api.login({ name, password: password.toString() })
+    const res = await api.login({ username, password: password.toString() })
     $message.success('登录成功')
-    setToken(res.data.token)
+    console.log(res)
+    setToken(res.token)
     if (isRemember.value) {
-      lStorage.set('loginInfo', { name, password })
+      lStorage.set('loginInfo', { username, password })
     } else {
       lStorage.remove('loginInfo')
     }
